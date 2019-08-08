@@ -1,0 +1,53 @@
+int thread_port; int thread_position; int thread_speed;
+void servo_thread1(){
+    enable_servo(thread_port);
+    int current = get_servo_position(thread_port);
+    while(current <= thread_position-thread_speed || current >= thread_position+thread_speed){
+        if(current < thread_position){
+            current += thread_speed;
+            set_servo_position(thread_port, current);
+            msleep(2);
+        }
+        if(current > thread_position){
+            current -= thread_speed;
+            set_servo_position(thread_port, current);
+            msleep(2);
+        }
+    }
+    set_servo_position(thread_port,thread_position);
+    disable_servo(thread_port);
+}
+
+int thread_prt; int thread_pos; int thread_spd;
+void servo_thread2(){
+    enable_servo(thread_prt);
+    int current = get_servo_position(thread_prt);
+    while(current <= thread_pos-thread_spd || current >= thread_pos+thread_spd){
+        if(current < thread_pos){
+            current += thread_spd;
+            set_servo_position(thread_prt, current);
+            msleep(2);
+        }
+        if(current > thread_pos){
+            current -= thread_spd;
+            set_servo_position(thread_prt, current);
+            msleep(2);
+        }
+    }
+    set_servo_position(thread_prt,thread_pos);
+    disable_servo(thread_prt);
+}
+
+void thread1(int input_port, int input_position, int input_speed){
+    thread_port=input_port; thread_position=input_position; thread_speed=input_speed;
+    thread one;
+    one = thread_create(servo_thread1);
+    thread_start(one);
+}
+
+void thread2(int input_port, int input_position, int input_speed){
+    thread_prt=input_port; thread_pos=input_position; thread_spd=input_speed;
+    thread two;
+    two = thread_create(servo_thread2);
+    thread_start(two);
+}
